@@ -27,8 +27,21 @@ export default function UserList() {
   const { data, isLoading, error } = useQuery("users", async () => {
     const response = await fetch("http://localhost:3000/api/users");
     const data = await response.json();
+
+    const users = data.users.map(user => {
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: new Date(user.createdAt).toLocaleDateString("pt-BR", {
+          day: '2-digit',
+          month: 'long',
+          year: 'numeric',
+        }),
+      }
+    });
     
-    return data;
+    return users;
   });
 
   const isWideVersion = useBreakpointValue({
@@ -83,20 +96,22 @@ export default function UserList() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <Tr px={["4", "4", "6"]}>
-                    <Td><Checkbox colorScheme="pink" /></Td>
-                    <Td>
-                      <Box>
-                        <Text fontWeight="bold">
-                          John Doe
-                        </Text>
-                        <Text fontSize="sm">
-                          johndoe@example.com.br
-                        </Text>
-                      </Box>
-                    </Td>
-                    {isWideVersion && <Td>21 de Agosto, 2021</Td>}
-                  </Tr>
+                  {data.map(user => (
+                    <Tr key={user.id} px={["4", "4", "6"]}>
+                      <Td><Checkbox colorScheme="pink" /></Td>
+                      <Td>
+                        <Box>
+                          <Text fontWeight="bold">
+                            {user.name}
+                          </Text>
+                          <Text fontSize="sm">
+                            {user.email}
+                          </Text>
+                        </Box>
+                      </Td>
+                      {isWideVersion && <Td>{user.createdAt}</Td>}
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
               <Pagination />
