@@ -42,6 +42,8 @@ export default function UserList() {
     });
     
     return users;
+  }, {
+    staleTime: 5000, // 5 segundos
   });
 
   const isWideVersion = useBreakpointValue({
